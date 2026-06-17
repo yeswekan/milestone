@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milestone Client Services — The operating system for independent ISPs</title>
+<meta name="description" content="Milestone Client Services is the OSS/BSS platform that runs your network, billing, and support from one place. Built for regional and independent internet service providers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1B2B;          /* deep navy ink */
+    --ink-2:#13283D;        /* panel navy */
+    --paper:#F7F8F6;        /* near-white paper */
+    --paper-2:#FFFFFF;
+    --line:#DFE4E2;         /* hairline */
+    --signal:#1F8FB8;       /* signal cyan/teal */
+    --signal-bright:#27C2E0;
+    --amber:#E8A33D;        /* live/active amber */
+    --mute:#5B6B79;         /* muted slate text */
+    --good:#2FA36B;
+    --r:14px;
+    --maxw:1180px;
+    --display:"Space Grotesk",system-ui,sans-serif;
+    --body:"Inter",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    font-feature-settings:"cv11","ss01";
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .mono{font-family:var(--mono)}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--signal);
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .eyebrow::before{content:"";width:18px;height:1px;background:var(--signal);display:inline-block}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--body);font-weight:600;font-size:15px;
+    padding:13px 22px;border-radius:10px;cursor:pointer;border:1px solid transparent;
+    transition:transform .15s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn-primary{background:var(--ink);color:#fff}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(11,27,43,.55)}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .btn .arrow{transition:transform .2s ease}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  /* ---------- nav ---------- */
+  header{position:sticky;top:0;z-index:50;background:rgba(11,27,43,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .logo-img{display:block;height:38px;width:auto}
+  .nav-links{display:flex;gap:30px;align-items:center}
+  .nav-links a{font-size:14.5px;color:#9FB4C4;font-weight:500}
+  .nav-links a:hover{color:#fff}
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  .nav-cta .btn-ghost{color:#fff;border-color:rgba(255,255,255,.22)}
+  .nav-cta .btn-ghost:hover{border-color:#fff}
+  .nav-cta .btn-primary{background:var(--amber);color:var(--ink)}
+  .nav-cta .btn-primary:hover{box-shadow:0 12px 28px -12px rgba(232,163,61,.6)}
+  @keyframes pulse{0%{transform:scale(.6);opacity:.7}100%{transform:scale(2.2);opacity:0}}
+  .menu-btn{display:none;background:none;border:none;cursor:pointer;color:#fff}
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 40px;position:relative;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .hero h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(38px,5vw,62px);line-height:1.02;letter-spacing:-.025em;
+    margin:22px 0 20px;
+  }
+  .hero h1 em{font-style:normal;color:var(--signal);position:relative}
+  .hero p.lead{font-size:19px;color:var(--mute);max-width:30em;margin-bottom:30px}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .hero-note{margin-top:22px;font-size:13.5px;color:var(--mute);display:flex;align-items:center;gap:8px}
+  .hero-note .tick{color:var(--good);font-weight:700}
+
+  /* ---------- console card (signature) ---------- */
+  .console{
+    background:var(--ink);border-radius:18px;overflow:hidden;
+    box-shadow:0 40px 80px -40px rgba(11,27,43,.5);
+    border:1px solid rgba(255,255,255,.06);
+  }
+  .console-bar{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.07);background:var(--ink-2)}
+  .console-bar .dots{display:flex;gap:6px}
+  .console-bar .dots i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .console-bar .tt{font-family:var(--mono);font-size:12px;color:#8FA6B8;margin-left:6px}
+  .console-bar .live{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--amber);display:flex;align-items:center;gap:6px}
+  .console-bar .live b{width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;animation:blink 1.6s infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .console-body{padding:20px 18px 22px;color:#D6E2EC}
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+  .metric{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:13px 13px 12px}
+  .metric .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7E97A9}
+  .metric .v{font-family:var(--display);font-weight:600;font-size:25px;letter-spacing:-.02em;margin-top:5px;color:#fff}
+  .metric .v small{font-size:13px;color:var(--signal-bright);font-weight:500}
+  .topo{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:14px 14px 8px}
+  .topo .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7E97A9;margin-bottom:6px;display:flex;justify-content:space-between}
+  .feed{margin-top:13px;font-family:var(--mono);font-size:11.5px;line-height:1.95;color:#9FB4C4}
+  .feed .row{display:flex;gap:9px}
+  .feed .t{color:#5E7689}
+  .feed .ok{color:var(--good)}
+  .feed .am{color:var(--amber)}
+
+  /* ---------- logos strip ---------- */
+  .trust{padding:30px 0 8px;border-top:1px solid var(--line);margin-top:46px}
+  .trust .cap{text-align:center;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:20px}
+  .trust-row{display:flex;justify-content:center;flex-wrap:wrap;gap:14px 40px;opacity:.8}
+  .trust-row span{font-family:var(--display);font-weight:600;font-size:18px;color:var(--ink);opacity:.55;letter-spacing:-.01em}
+
+  /* ---------- section shell ---------- */
+  section{padding:84px 0}
+  .sec-head{max-width:none;margin-bottom:46px}
+  .sec-head h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,3.4vw,42px);letter-spacing:-.02em;line-height:1.08;margin:16px 0 0;max-width:18em}
+  .sec-head p{color:var(--mute);font-size:17px;margin-top:14px;max-width:36em}
+
+  /* ---------- pain → cards ---------- */
+  .stack-bg{background:var(--ink);color:#E6EEF4}
+  .stack-bg .eyebrow{color:var(--signal-bright)}
+  .stack-bg .eyebrow::before{background:var(--signal-bright)}
+  .stack-bg .sec-head h2{color:#fff}
+  .stack-bg .sec-head p{color:#9FB4C4}
+  .modules{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden}
+  .module{background:var(--ink);padding:30px 28px;position:relative;transition:background .25s ease}
+  .module:hover{background:var(--ink-2)}
+  .module .num{font-family:var(--mono);font-size:12px;color:var(--signal-bright);letter-spacing:.05em}
+  .module h3{font-family:var(--display);font-weight:600;font-size:21px;margin:14px 0 9px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .module p{color:#9FB4C4;font-size:15px}
+  .module .ic{width:34px;height:34px;flex:none}
+
+  /* ---------- how it works ---------- */
+  .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .step{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:28px 26px;position:relative}
+  .step .step-n{font-family:var(--mono);font-size:13px;color:var(--signal);font-weight:500}
+  .step h3{font-family:var(--display);font-weight:600;font-size:20px;margin:14px 0 8px;letter-spacing:-.01em}
+  .step p{color:var(--mute);font-size:15px}
+  .step .connector{position:absolute;top:50%;right:-22px;width:22px;height:1px;background:var(--line);z-index:2}
+  .step .connector::after{content:"";position:absolute;right:0;top:-3px;border:3px solid transparent;border-left-color:var(--signal)}
+
+  /* ---------- outcomes / stats ---------- */
+  .outcomes{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .stat{padding:8px 0}
+  .stat .big{font-family:var(--display);font-weight:600;font-size:clamp(36px,4vw,52px);letter-spacing:-.03em;color:var(--ink);line-height:1}
+  .stat .big span{color:var(--signal)}
+  .stat .lbl{color:var(--mute);font-size:14.5px;margin-top:10px;max-width:15em}
+  .stat{border-left:2px solid var(--line);padding-left:20px}
+
+  /* ---------- quote ---------- */
+  .quote-sec{padding:70px 0}
+  .quote{max-width:46em;margin:0 auto;text-align:center}
+  .quote blockquote{font-family:var(--display);font-weight:500;font-size:clamp(22px,2.6vw,30px);line-height:1.3;letter-spacing:-.015em}
+  .quote blockquote span{color:var(--signal)}
+  .quote .who{margin-top:24px;font-size:14.5px;color:var(--mute)}
+  .quote .who b{color:var(--ink);font-weight:600}
+
+  /* ---------- CTA ---------- */
+  .cta-sec{padding:0 0 90px}
+  .cta-card{
+    background:var(--ink);border-radius:22px;padding:56px 48px;color:#fff;position:relative;overflow:hidden;
+  }
+  .cta-card .grid-deco{position:absolute;inset:0;background-image:linear-gradient(rgba(39,194,224,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(39,194,224,.07) 1px,transparent 1px);background-size:34px 34px;mask-image:radial-gradient(circle at 80% 20%,#000,transparent 70%)}
+  .cta-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+  .cta-card h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em;line-height:1.08}
+  .cta-card p{color:#9FB4C4;margin-top:14px;font-size:16.5px;max-width:30em}
+  .form{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px}
+  .form label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9FB4C4;margin:0 0 6px}
+  .form .field{margin-bottom:14px}
+  .form input,.form select{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:11px 13px;color:#fff;font-family:var(--body);font-size:14.5px}
+  .form input::placeholder{color:#6E869A}
+  .form input:focus,.form select:focus{outline:none;border-color:var(--signal-bright);box-shadow:0 0 0 3px rgba(39,194,224,.18)}
+  .form .btn{width:100%;justify-content:center;background:var(--amber);color:var(--ink);margin-top:4px}
+  .form .btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(232,163,61,.6)}
+  .form .fineprint{font-size:11.5px;color:#7E97A9;margin-top:12px;text-align:center}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:48px 0 40px}
+  .foot{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px}
+  .foot-logo{display:inline-block;background:var(--ink);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+  .foot-logo img{display:block;height:30px;width:auto}
+  .foot p.blurb{color:var(--mute);font-size:14px;max-width:24em}
+  .foot h4{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:14px}
+  .foot a{display:block;color:var(--ink);opacity:.75;font-size:14.5px;margin-bottom:9px}
+  .foot a:hover{opacity:1;color:var(--signal)}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:42px;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--mute);flex-wrap:wrap;gap:10px}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:40px}
+    .modules{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr}
+    .step .connector{display:none}
+    .outcomes{grid-template-columns:repeat(2,1fr)}
+    .cta-inner{grid-template-columns:1fr}
+    .foot{grid-template-columns:1fr 1fr}
+    .nav-links{display:none}
+    .menu-btn{display:block}
+  }
+  @media (max-width:520px){
+    .metrics{grid-template-columns:1fr 1fr}
+    .outcomes{grid-template-columns:1fr 1fr}
+    .foot{grid-template-columns:1fr}
+    .cta-card{padding:36px 24px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a href="#" aria-label="Milestone Client Services — home"><img class="logo-img" src="milestone-logo.png" alt="Milestone Client Services"></a>
+      <div class="nav-links">
+        <a href="#platform">Platform</a>
+        <a href="#how">How it works</a>
+        <a href="#outcomes">Outcomes</a>
+        <a href="#why">Why Milestone</a>
+      </div>
+      <div class="nav-cta">
+        <a href="#demo" class="btn btn-ghost">Sign in</a>
+        <a href="#demo" class="btn btn-primary">Book a demo <span class="arrow">→</span></a>
+      </div>
+      <button class="menu-btn" aria-label="Menu">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">OSS / BSS for independent ISPs</span>
+        <h1>Run your whole network from <em>one console</em>.</h1>
+        <p class="lead">Provisioning, billing, monitoring, and support — unified in a single platform built for regional and independent internet providers. No stitched-together tools. No enterprise overhead.</p>
+        <div class="hero-actions">
+          <a href="#demo" class="btn btn-primary">Book a demo <span class="arrow">→</span></a>
+          <a href="#platform" class="btn btn-ghost">See the platform</a>
+        </div>
+        <div class="hero-note"><span class="tick">✓</span> Migrate from your current stack in weeks, not quarters.</div>
+      </div>
+
+      <!-- SIGNATURE: live operations console -->
+      <div class="console" aria-hidden="true">
+        <div class="console-bar">
+          <span class="dots"><i style="background:#E8A33D"></i><i style="background:#3a546b"></i><i style="background:#3a546b"></i></span>
+          <span class="tt">milestone · network ops</span>
+          <span class="live"><b></b>LIVE</span>
+        </div>
+        <div class="console-body">
+          <div class="metrics">
+            <div class="metric"><div class="k">Subscribers</div><div class="v">12,480</div></div>
+            <div class="metric"><div class="k">Network uptime</div><div class="v">99.98<small>%</small></div></div>
+            <div class="metric"><div class="k">Open tickets</div><div class="v">7</div></div>
+          </div>
+          <div class="topo">
+            <div class="lbl"><span>Regional topology</span><span style="color:#2FA36B">all nodes healthy</span></div>
+            <svg viewBox="0 0 420 120" width="100%" height="110">
+              <g stroke="#2C4254" stroke-width="1.4">
+                <line x1="210" y1="60" x2="80" y2="28"/>
+                <line x1="210" y1="60" x2="80" y2="92"/>
+                <line x1="210" y1="60" x2="340" y2="28"/>
+                <line x1="210" y1="60" x2="340" y2="92"/>
+                <line x1="80" y1="28" x2="30" y2="60"/>
+                <line x1="340" y1="92" x2="390" y2="60"/>
+              </g>
+              <g>
+                <circle cx="210" cy="60" r="9" fill="#27C2E0"/>
+                <circle cx="210" cy="60" r="9" fill="none" stroke="#27C2E0" stroke-width="1.5" opacity=".5"><animate attributeName="r" from="9" to="20" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" from=".5" to="0" dur="2.4s" repeatCount="indefinite"/></circle>
+                <circle cx="80" cy="28" r="6" fill="#E8A33D"/>
+                <circle cx="80" cy="92" r="6" fill="#2FA36B"/>
+                <circle cx="340" cy="28" r="6" fill="#2FA36B"/>
+                <circle cx="340" cy="92" r="6" fill="#2FA36B"/>
+                <circle cx="30" cy="60" r="5" fill="#2FA36B"/>
+                <circle cx="390" cy="60" r="5" fill="#2FA36B"/>
+              </g>
+            </svg>
+          </div>
+          <div class="feed">
+            <div class="row"><span class="t">09:41:02</span> <span class="ok">▸</span> subscriber #8821 provisioned · 1 Gbps</div>
+            <div class="row"><span class="t">09:41:00</span> <span class="ok">▸</span> invoice batch sent · 412 accounts</div>
+            <div class="row"><span class="t">09:40:55</span> <span class="am">▸</span> node CORE-N7 latency +6ms · auto-rerouted</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- trust strip -->
+    <div class="trust">
+      <div class="cap">Trusted by independent &amp; regional operators</div>
+      <div class="trust-row">
+        <span>NorthLink Fiber</span>
+        <span>Cascade Broadband</span>
+        <span>RiverNet</span>
+        <span>Summit Wireless</span>
+        <span>Hollow Creek ISP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM / MODULES -->
+<section id="platform" class="stack-bg">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The platform</span>
+      <h2>One system instead of five.</h2>
+      <p>Most independent ISPs run billing in one tool, provisioning in another, monitoring in a third, and support in a fourth — none of which talk to each other. Milestone replaces the stack.</p>
+    </div>
+    <div class="modules">
+      <div class="module">
+        <div class="num">01</div>
+        <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#27C2E0" stroke-width="1.6"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="1" fill="#27C2E0"/><circle cx="7" cy="17" r="1" fill="#27C2E0"/></svg>Provisioning &amp; OSS</h3>
+        <p>Turn up subscribers, assign speeds and IPs, and push config to your network gear automatically. New customer to live service in minutes.</p>
+      </div>
+      <div class="module">
+        <div class="num">02</div>
+        <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#27C2E0" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="15" x2="11" y2="15"/></svg>Billing &amp; BSS</h3>
+        <p>Recurring plans, usage charges, prorated changes, autopay, and dunning. Run a billing cycle without a spreadsheet in sight.</p>
+      </div>
+      <div class="module">
+        <div class="num">03</div>
+        <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#27C2E0" stroke-width="1.6"><path d="M3 13l4-4 4 4 4-7 6 9"/><line x1="3" y1="20" x2="21" y2="20"/></svg>Network monitoring</h3>
+        <p>Live status across every node and link, with alerts before customers notice. See an outage on the map, not in your inbox.</p>
+      </div>
+      <div class="module">
+        <div class="num">04</div>
+        <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#27C2E0" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Support &amp; self-service</h3>
+        <p>A ticketing inbox tied to each subscriber's account, plus a customer portal where they pay, upgrade, and report issues themselves.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From scattered tools to a single source of truth.</h2>
+    </div>
+    <div class="flow">
+      <div class="step">
+        <div class="step-n">Step 1</div>
+        <h3>Connect your network</h3>
+        <p>Milestone integrates with the routers, OLTs, and radios you already run. We map your existing subscribers and plans during onboarding.</p>
+        <div class="connector"></div>
+      </div>
+      <div class="step">
+        <div class="step-n">Step 2</div>
+        <h3>Unify your data</h3>
+        <p>Billing, provisioning, and support records merge into one account record per subscriber — so every team sees the same picture.</p>
+        <div class="connector"></div>
+      </div>
+      <div class="step">
+        <div class="step-n">Step 3</div>
+        <h3>Operate from one console</h3>
+        <p>Provision, bill, monitor, and support from a single dashboard. Automate the repetitive work and put your team on the exceptions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section id="outcomes" style="padding-top:30px">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What operators see</span>
+      <h2>Less time on tooling. More time on the network.</h2>
+    </div>
+    <div class="outcomes">
+      <div class="stat"><div class="big">68<span>%</span></div><div class="lbl">less time spent reconciling billing each month</div></div>
+      <div class="stat"><div class="big">3<span>×</span></div><div class="lbl">faster subscriber turn-up versus manual provisioning</div></div>
+      <div class="stat"><div class="big">~9<span>min</span></div><div class="lbl">median first response on support tickets</div></div>
+      <div class="stat"><div class="big">1</div><div class="lbl">platform replacing the tools your team logs into today</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-sec">
+  <div class="wrap">
+    <div class="quote">
+      <span class="eyebrow" style="justify-content:center;display:flex;margin-bottom:22px">From the field</span>
+      <blockquote>"We were running billing, provisioning, and tickets in three different systems. Milestone <span>put them on one screen</span> — onboarding a new subscriber went from an afternoon to a few clicks."</blockquote>
+      <div class="who"><b>Operations Lead</b> · regional fiber provider, ~9,000 subscribers</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / DEMO -->
+<section class="cta-sec" id="demo">
+  <div class="wrap">
+    <div class="cta-card">
+      <div class="grid-deco"></div>
+      <div class="cta-inner">
+        <div>
+          <h2>See Milestone running your network.</h2>
+          <p>Book a 30-minute walkthrough. We'll use a setup that mirrors your subscriber count and plans, so you see exactly how it fits — no generic demo deck.</p>
+        </div>
+        <div class="form">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" type="text" placeholder="Your name" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="email">Work email</label>
+            <input id="email" type="email" placeholder="you@yourisp.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="size">Subscriber count</label>
+            <select id="size">
+              <option>Under 1,000</option>
+              <option>1,000 – 5,000</option>
+              <option>5,000 – 25,000</option>
+              <option>25,000+</option>
+            </select>
+          </div>
+          <button class="btn" type="button" onclick="this.textContent='Thanks — we\'ll be in touch';this.disabled=true">Book a demo →</button>
+          <div class="fineprint">No spam. We reply within one business day.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <span class="foot-logo"><img src="milestone-logo.png" alt="Milestone Client Services"></span>
+        <p class="blurb">The OSS/BSS platform built for independent and regional internet service providers. One console for provisioning, billing, monitoring, and support.</p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <a href="#platform">Provisioning</a>
+        <a href="#platform">Billing</a>
+        <a href="#platform">Monitoring</a>
+        <a href="#platform">Support</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Customers</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </div>
+      <div>
+        <h4>Get started</h4>
+        <a href="#demo">Book a demo</a>
+        <a href="#">Migration guide</a>
+        <a href="#">Documentation</a>
+        <a href="#">Status</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Milestone Client Services. All rights reserved.</span>
+      <span class="mono">Built for operators who run real networks.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
